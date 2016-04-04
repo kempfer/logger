@@ -20,6 +20,11 @@ class Logger extends AbstractLogger implements LoggerInterface
     protected $timezone;
 
     /**
+     * @var bool
+     */
+    protected $useMicrosecondTimestamps;
+
+    /**
      * @return HandlerInterface
      */
     public function getHandler()
@@ -35,12 +40,21 @@ class Logger extends AbstractLogger implements LoggerInterface
         $this->handler = $handler;
     }
 
-
+    /**
+     * Set the timezone to be used for the timestamp of log records.
+     *
+     * @param \DateTimeZone $timezone Timezone object
+     */
     public function setTimezone(\DateTimeZone $timezone)
     {
         $this->timezone = $timezone;
     }
 
+    /**
+     * Get the timezone to be used for the timestamp of log records.
+     *
+     * @return \DateTimeZone
+     */
     public function getTimezone()
     {
         if ($this->timezone === null) {
@@ -48,6 +62,17 @@ class Logger extends AbstractLogger implements LoggerInterface
         }
 
         return $this->timezone;
+    }
+
+    /**
+     * Control the use of microsecond resolution timestamps in the 'datetime'
+     * member of new records.
+     *
+     * @param bool $micro True to use microtime() to create timestamps
+     */
+    public function useMicrosecondTimestamps($micro)
+    {
+        $this->useMicrosecondTimestamps = (bool) $micro;
     }
 
 
