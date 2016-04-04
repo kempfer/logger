@@ -1,0 +1,22 @@
+{
+
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "http://gitlab.groupbwt.com:888/zotov_mv/checklist_7.git"
+    }
+  ],
+  "require": {
+    "zotov_mv/FileSystem": "*",
+    "psr/log": "~1.0"
+  },
+  "minimum-stability": "dev",
+  "config": {
+    "secure-http": false
+  },
+  "autoload": {
+  "psr-4": {
+    "zotov_mv\\": ""
+  }
+}
+}
