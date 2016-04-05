@@ -32,11 +32,4 @@ interface Logger extends LoggerInterface
      */
     public function getTimezone();
 
-    /**
-     * Control the use of microsecond resolution timestamps in the 'datetime'
-     * member of new records.
-     *
-     * @param bool $micro True to use microtime() to create timestamps
-     */
-    public function useMicrosecondTimestamps($micro);
 }
