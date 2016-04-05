@@ -2,21 +2,21 @@
 
 namespace zotov_mv\Logger\Contracts;
 
+use zotov_mv\Logger\Contracts\Record as RecordInterface;
 
 interface Handler
 {
 
     /**
-     * @param array $record
+     * @param RecordInterface $record
      *
-     * @return mixed
+     * @return bool
      */
-    public function push(array $record);
+    public function push(RecordInterface $record);
 
     /**
-     * @param array $records
+     * @param RecordInterface[] $records
      *
-     * @return mixed
      */
     public function pushBatch(array $records);
 }
