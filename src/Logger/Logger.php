@@ -5,9 +5,15 @@ namespace zotov_mv\Logger;
 use Psr\Log\AbstractLogger;
 use zotov_mv\Logger\Contracts\Handler as HandlerInterface;
 use zotov_mv\Logger\Contracts\Logger as LoggerInterface;
+use Psr\Log\InvalidArgumentException;
 
 class Logger extends AbstractLogger implements LoggerInterface
 {
+
+    /**
+     * @var Record[]
+     */
+    protected $buffer = [];
 
     /**
      * @var HandlerInterface
@@ -15,14 +21,28 @@ class Logger extends AbstractLogger implements LoggerInterface
     protected $handler;
 
     /**
+     * @var bool
+     */
+    protected $deferredRecord;
+
+    /**
      * @var
      */
     protected $timezone;
 
+
     /**
-     * @var bool
+     * Logger constructor.
+     *
+     * @param HandlerInterface $handler
+     * @param bool             $deferredRecord
      */
-    protected $useMicrosecondTimestamps;
+    public function __construct(HandlerInterface $handler, $deferredRecord = false)
+    {
+        $this->setHandler($handler);
+        $this->deferredRecord = $deferredRecord;
+    }
+
 
     /**
      * @return HandlerInterface
@@ -65,20 +85,73 @@ class Logger extends AbstractLogger implements LoggerInterface
     }
 
     /**
-     * Control the use of microsecond resolution timestamps in the 'datetime'
-     * member of new records.
-     *
-     * @param bool $micro True to use microtime() to create timestamps
+     * @return boolean
      */
-    public function useMicrosecondTimestamps($micro)
+    public function isDeferredRecord()
     {
-        $this->useMicrosecondTimestamps = (bool) $micro;
+        return $this->deferredRecord;
+    }
+
+    /**
+     * @param boolean $deferredRecord
+     */
+    public function setDeferredRecord($deferredRecord)
+    {
+        $this->deferredRecord = (bool)$deferredRecord;
     }
 
 
-    public function log($level, $message, array $context = array())
+    /**
+     * Logs with an arbitrary level.
+     *
+     * @param string $level
+     * @param string $message
+     * @param array  $context
+     *
+     * @return null
+     */
+    public function log($level, $message, array $context = [])
     {
-        // TODO: Implement log() method.
+        $this->checkLevel($level);
+        $record = new  Record($level, (string)$message, $this->getTime(), $context);
+        if ($this->isDeferredRecord()) {
+            $this->buffer[] = $record;
+        } else {
+            $this->handlerPush($record);
+        }
+
+    }
+
+    /**
+     * @param string $level
+     */
+    protected function checkLevel($level)
+    {
+        if (!defined('Psr\Log\LogLevel::' . $level)) {
+            throw new InvalidArgumentException("Unknown type level: " . $level);
+        }
+
+    }
+
+    /**
+     * @param Record $record
+     */
+    protected function handlerPush(Record $record)
+    {
+        $this->handler->push($record);
+    }
+
+    /**
+     * @return string
+     */
+    protected function getTime()
+    {
+        return '';
+    }
+
+    public function __destruct()
+    {
+        $this->handler->pushBatch($this->buffer);
     }
 
 
