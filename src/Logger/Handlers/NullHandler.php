@@ -8,13 +8,11 @@ class NullHandler extends AbstractHandler
 {
 
     /**
-     * @param RecordInterface $record
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function push(RecordInterface $record)
     {
-        return true;
+        //return true;
     }
 
 
