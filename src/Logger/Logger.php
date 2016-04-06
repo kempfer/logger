@@ -26,7 +26,7 @@ class Logger extends AbstractLogger implements LoggerInterface
     protected $deferredRecord;
 
     /**
-     * @var
+     * @var \DateTimeZone
      */
     protected $timezone;
 
@@ -113,7 +113,7 @@ class Logger extends AbstractLogger implements LoggerInterface
     public function log($level, $message, array $context = [])
     {
         $this->checkLevel($level);
-        $record = new  Record($level, (string)$message, $this->getTime(), $context);
+        $record = new  Record($level, (string)$message, $this->getDateTime(), $context);
         if ($this->isDeferredRecord()) {
             $this->buffer[] = $record;
         } else {
@@ -127,7 +127,7 @@ class Logger extends AbstractLogger implements LoggerInterface
      */
     protected function checkLevel($level)
     {
-        if (!defined('Psr\Log\LogLevel::' . $level)) {
+        if (!defined('Psr\Log\LogLevel::' . mb_strtoupper($level))) {
             throw new InvalidArgumentException("Unknown type level: " . $level);
         }
 
@@ -142,11 +142,11 @@ class Logger extends AbstractLogger implements LoggerInterface
     }
 
     /**
-     * @return string
+     * @return \DateTime
      */
-    protected function getTime()
+    protected function getDateTime()
     {
-        return '';
+        return new \DateTime('now', $this->timezone);
     }
 
     public function __destruct()
