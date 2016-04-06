@@ -51,7 +51,8 @@ class StreamHandler extends AbstractHandler
      */
     public function push(RecordInterface $record)
     {
-        // TODO: Implement push() method.
+        $formattedRecord = $this->getFormatter()->format($record);
+        $this->write($formattedRecord);
     }
 
     /**
@@ -59,7 +60,29 @@ class StreamHandler extends AbstractHandler
      */
     public function pushBatch(array $records)
     {
+
     }
+
+    protected function write($formattedRecord)
+    {
+        $this->prepareSteam();
+
+        $this->fileLocking(LOCK_EX);
+
+        fwrite($this->stream, (string) $formattedRecord);
+
+        $this->fileLocking(LOCK_UN);
+    }
+
+    public function close()
+    {
+        if(is_resource($this->stream)){
+            fclose($this->stream);
+        }
+
+        $this->stream = null;
+    }
+
 
 
     /**
@@ -78,12 +101,31 @@ class StreamHandler extends AbstractHandler
         }
     }
 
-    public function close()
+    protected function prepareSteam()
     {
-        if(is_resource($this->stream)){
-            fclose($this->stream);
+        if(!is_resource($this->stream)) {
+            $this->stream = fopen($this->url, 'a');
+            $this->setFilePermission();
         }
     }
+
+    protected function setFilePermission()
+    {
+        if ($this->filePermission !== null) {
+            @chmod($this->url, $this->filePermission);
+        }
+    }
+
+    /**
+     * @param int $status
+     */
+    protected function fileLocking($status)
+    {
+        if ($this->useLocking) {
+            flock($this->stream, $status);
+        }
+    }
+
 
     public function __destruct()
     {
