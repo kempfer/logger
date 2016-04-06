@@ -2,3 +2,4 @@
 
 src/vendor
 src/composer.lock
+src/log.log
