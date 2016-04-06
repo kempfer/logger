@@ -7,7 +7,6 @@ use zotov_mv\Logger\Contracts\Record as RecordInterface;
 
 class Record implements RecordInterface
 {
-
     /**
      * @var string
      */
@@ -29,14 +28,29 @@ class Record implements RecordInterface
     protected $time;
 
     /**
+     * @var bool
+     */
+    protected $isException;
+
+    /**
+     * @var \Throwable
+     */
+    protected $exception;
+
+    /**
+     * @var string|null
+     */
+    protected $preparedMessage = null;
+
+    /**
      * Record constructor.
      *
-     * @param string $level
-     * @param string $message
-     * @param string $time
-     * @param array  $context
+     * @param string    $level
+     * @param string    $message
+     * @param \DateTime $time
+     * @param array     $context
      */
-    public function __construct($level, $message, $time,  array $context = [])
+    public function __construct($level, $message, \DateTime $time, array $context = [])
     {
         $this->level = $level;
         $this->message = $message;
@@ -65,7 +79,10 @@ class Record implements RecordInterface
      */
     public function getMessage()
     {
-        return $this->message;
+        if($this->preparedMessage === null) {
+            $this->preparedMessage = $this->interpolateMessage();
+        }
+        return $this->preparedMessage;
     }
 
     /**
@@ -77,7 +94,7 @@ class Record implements RecordInterface
     }
 
     /**
-     * @return string
+     * @return  \DateTime
      */
     public function getTime()
     {
@@ -85,13 +102,12 @@ class Record implements RecordInterface
     }
 
     /**
-     * @param string $time
+     * @param \DateTime $time
      */
-    public function setTime($time)
+    public function setTime(\DateTime $time)
     {
         $this->time = $time;
     }
-
 
 
     /**
@@ -107,15 +123,76 @@ class Record implements RecordInterface
      */
     public function setContext(array $context)
     {
-        $this->context = $context;
+        $this->context = $this->prepareContext($context);
     }
 
     /**
+     * @return \Throwable
+     */
+    public function getException()
+    {
+        return $this->exception;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function useException()
+    {
+        return $this->isException;
+    }
+
+
+
+    /**
+     *
      * @return string
      */
-    public function toString()
+    public function interpolateMessage()
     {
-        // TODO: Implement toString() method.
+        $replace = [];
+        foreach ($this->getContext() as $key => $val) {
+            $replace['{' . $key . '}'] = $val;
+        }
+
+        // Подстановка значений в сообщение и возврат результата.
+        return strtr($this->message, $replace);
+    }
+
+    /**
+     * @param array $context
+     *
+     * @return array
+     */
+    protected function prepareContext(array $context)
+    {
+        if($this->contextCheckException($context)) {
+            $this->isException = true;
+            $this->exception = $context['except'];
+            unset($context['except']);
+        } else {
+            $this->isException = false;
+        }
+
+        return $context;
+    }
+
+    /**
+     * @param array $context
+     *
+     * @return bool
+     */
+    protected function contextCheckException(array $context)
+    {
+        if(
+            array_key_exists('except', $context) &&
+            ($context instanceof \Exception) &&
+            ($context instanceof \Throwable))
+        {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 

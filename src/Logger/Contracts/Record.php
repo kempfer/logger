@@ -2,7 +2,6 @@
 
 namespace zotov_mv\Logger\Contracts;
 
-
 interface Record
 {
     /**
@@ -38,18 +37,13 @@ interface Record
     public function setContext(array $context);
 
     /**
-     * @return string
+     * @return  \DateTime
      */
     public function getTime();
 
     /**
-     * @param string $time
+     * @param \DateTime $time
      */
-    public function setTime($time);
-
-    /**
-     * @return string
-     */
-    public function toString();
+    public function setTime(\DateTime $time);
 
 }
