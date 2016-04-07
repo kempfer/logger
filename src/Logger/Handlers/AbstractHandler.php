@@ -4,7 +4,9 @@ namespace zotov_mv\Logger\Handlers;
 
 use zotov_mv\Logger\Contracts\Formatter as FormatterInterface;
 use zotov_mv\Logger\Contracts\Handler as HandlerInterface;
+use zotov_mv\Logger\Contracts\RecordIterator as RecordIteratorInterface;
 use zotov_mv\Logger\Formatter\Line;
+
 
 abstract class AbstractHandler implements HandlerInterface
 {
@@ -39,7 +41,7 @@ abstract class AbstractHandler implements HandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function pushBatch(array $records)
+    public function pushBatch(RecordIteratorInterface $records)
     {
         foreach($records as $record) {
             $this->push($record);

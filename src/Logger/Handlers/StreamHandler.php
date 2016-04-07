@@ -55,14 +55,6 @@ class StreamHandler extends AbstractHandler
         $this->write($formattedRecord);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function pushBatch(array $records)
-    {
-
-    }
-
     protected function write($formattedRecord)
     {
         $this->prepareSteam();
