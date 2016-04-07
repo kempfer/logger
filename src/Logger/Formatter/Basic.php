@@ -18,6 +18,6 @@ abstract class Basic implements  FormatterInterface
 
     protected function normalizeContext(array $data)
     {
-        
+
     }
 }
