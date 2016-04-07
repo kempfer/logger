@@ -3,10 +3,14 @@
 namespace zotov_mv\Logger;
 
 use zotov_mv\Logger\Contracts\Record as RecordInterface;
+use zotov_mv\Logger\Helpers\InterpolateTrait;
 
 
 class Record implements RecordInterface
 {
+
+    use InterpolateTrait;
+
     /**
      * @var string
      */
@@ -80,7 +84,7 @@ class Record implements RecordInterface
     public function getMessage()
     {
         if($this->preparedMessage === null) {
-            $this->preparedMessage = $this->interpolateMessage();
+            $this->preparedMessage = $this->interpolate($this->message, $this->getContext());
         }
         return $this->preparedMessage;
     }
@@ -140,23 +144,6 @@ class Record implements RecordInterface
     public function useException()
     {
         return $this->isException;
-    }
-
-
-
-    /**
-     *
-     * @return string
-     */
-    public function interpolateMessage()
-    {
-        $replace = [];
-        foreach ($this->getContext() as $key => $val) {
-            $replace['{' . $key . '}'] = $val;
-        }
-
-        // Подстановка значений в сообщение и возврат результата.
-        return strtr($this->message, $replace);
     }
 
     /**

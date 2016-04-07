@@ -3,8 +3,8 @@
 
 namespace zotov_mv\Logger\Contracts;
 
-
 use zotov_mv\Logger\Contracts\Record as RecordInterface;
+use zotov_mv\Logger\Contracts\RecordIterator as RecordIteratorInterface;
 
 interface Formatter
 {
@@ -17,5 +17,10 @@ interface Formatter
      */
     public function format(RecordInterface $record);
 
-    public function formatBatch(array $record);
+    /**
+     * @param RecordIteratorInterface $records
+     *
+     * @return mixed
+     */
+    public function formatBatch(RecordIteratorInterface $records);
 }

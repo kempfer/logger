@@ -4,6 +4,7 @@ namespace zotov_mv\Logger\Contracts;
 
 use zotov_mv\Logger\Contracts\Record as RecordInterface;
 use zotov_mv\Logger\Contracts\Formatter as FormatterInterface;
+use zotov_mv\Logger\Contracts\RecordIterator as RecordIteratorInterface;
 
 interface Handler
 {
@@ -16,10 +17,9 @@ interface Handler
     public function push(RecordInterface $record);
 
     /**
-     * @param RecordInterface[] $records
-     *
+     * @param RecordIteratorInterface $records
      */
-    public function pushBatch(array $records);
+    public function pushBatch(RecordIteratorInterface $records);
 
     /**
      * @return Formatter
