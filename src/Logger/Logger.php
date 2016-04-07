@@ -11,7 +11,7 @@ class Logger extends AbstractLogger implements LoggerInterface
 {
 
     /**
-     * @var Record[]
+     * @var RecordIterator
      */
     protected $buffer = [];
 
@@ -41,6 +41,7 @@ class Logger extends AbstractLogger implements LoggerInterface
     {
         $this->setHandler($handler);
         $this->deferredRecord = $deferredRecord;
+        $this->buffer = new RecordIterator();
     }
 
 
@@ -115,7 +116,7 @@ class Logger extends AbstractLogger implements LoggerInterface
         $this->checkLevel($level);
         $record = new  Record($level, (string)$message, $this->getDateTime(), $context);
         if ($this->isDeferredRecord()) {
-            $this->buffer[] = $record;
+            $this->buffer->addRecord($record);
         } else {
             $this->handlerPush($record);
         }
