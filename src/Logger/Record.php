@@ -39,7 +39,7 @@ class Record implements RecordInterface
     /**
      * @var \Throwable
      */
-    protected $exception;
+    protected $exception = null;
 
     /**
      * @var string|null
@@ -59,7 +59,7 @@ class Record implements RecordInterface
         $this->level = $level;
         $this->message = $message;
         $this->time = $time;
-        $this->context = $context;
+        $this->setContext($context);
     }
 
     /**
