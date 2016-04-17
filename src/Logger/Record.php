@@ -173,8 +173,11 @@ class Record implements RecordInterface
     {
         if(
             array_key_exists('except', $context) &&
-            ($context instanceof \Exception) &&
-            ($context instanceof \Throwable))
+            (
+                ($context['except'] instanceof \Exception) ||
+                ($context instanceof \Throwable)
+            )
+        )
         {
             return true;
         } else {

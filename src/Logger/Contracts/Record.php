@@ -40,10 +40,21 @@ interface Record
      * @return  \DateTime
      */
     public function getTime();
+    
 
     /**
      * @param \DateTime $time
      */
     public function setTime(\DateTime $time);
+
+    /**
+     * @return \Throwable|null
+     */
+    public function getException();
+
+    /**
+     * @return boolean
+     */
+    public function useException();
 
 }

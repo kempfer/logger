@@ -3,20 +3,20 @@
 namespace zotov_mv\Logger\Contracts;
 
 use Psr\Log\LoggerInterface;
-use zotov_mv\Logger\Contracts\Handler as HandlerInterface;
+use zotov_mv\Logger\Contracts\Formatter as FormatterInterface;
 
 interface Logger extends LoggerInterface
 {
 
     /**
-     * @return HandlerInterface
+     * @return FormatterInterface
      */
-    public function getHandler();
+    public function getFormatter();
 
     /**
-     * @param HandlerInterface $handler
+     * @param FormatterInterface $formatter
      */
-    public function setHandler(HandlerInterface $handler);
+    public function setFormatter(FormatterInterface $formatter);
 
     /**
      * Set the timezone to be used for the timestamp of log records.
@@ -31,5 +31,16 @@ interface Logger extends LoggerInterface
      * @return \DateTimeZone
      */
     public function getTimezone();
+
+    /**
+     *
+     * @param string $channel
+     */
+    public function setChannel($channel);
+
+    /**
+     * @return string
+     */
+    public function getChannel();
 
 }
