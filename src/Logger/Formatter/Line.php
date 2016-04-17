@@ -6,32 +6,37 @@ use zotov_mv\Logger\Contracts\Record as RecordInterface;
 use zotov_mv\Logger\Contracts\RecordIterator as RecordIteratorInterface;
 
 class Line extends Basic
-
 {
-    protected $simpleFormat = "[{datetime}] {level_name}: {message} {context} {extra}\n";
+    protected $simpleFormat = "[{datetime}] {channel}.{level_name}: {message} {context} {except}\n";
 
     /**
      * {@inheritdoc}
      */
-    public function format(RecordInterface $record)
+    public function format(RecordInterface $record, $channel)
     {
-        return $this->interpolate($this->simpleFormat, [
-            'datetime' => $record->getTime()->format('d.m.Y H:i:s'),
+        $data = [
+            'channel' => $channel,
+            'datetime' => $record->getTime()->format($this->dateFormat),
             'level_name' => $record->getLevel(),
             'message' => $record->getMessage(),
-            'context' => json_encode($record->getContext()),
-            'extra' => ''
-        ]);
+            'context' => $this->toJson($this->normalizeContext($record->getContext())),
+            'except' => ''
+        ];
+        if ($record->useException()) {
+            $data['except'] =  $this->toJson($this->normalizeException($record->getException()));
+        }
+
+        return $this->interpolate($this->simpleFormat, $data);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function formatBatch(RecordIteratorInterface $records)
+    public function formatBatch(RecordIteratorInterface $records, $channel)
     {
         $format = '';
-        foreach ($records as $record) {
-            $format .= $this->format($record);
+        foreach ($records->getIterator() as $record) {
+            $format .= $this->format($record, $channel);
         }
 
         return $format;

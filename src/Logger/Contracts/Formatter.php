@@ -12,15 +12,18 @@ interface Formatter
      * Formats a log record.
      *
      * @param  RecordInterface $record A record to format
+     * @param  string          $channel
      *
      * @return mixed The formatted record
      */
-    public function format(RecordInterface $record);
+    public function format(RecordInterface $record, $channel);
 
     /**
      * @param RecordIteratorInterface $records
      *
+     * @param  string                 $channel
+     *
      * @return mixed
      */
-    public function formatBatch(RecordIteratorInterface $records);
+    public function formatBatch(RecordIteratorInterface $records, $channel);
 }
